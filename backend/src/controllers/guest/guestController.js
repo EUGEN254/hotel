@@ -2,6 +2,17 @@ import bcrypt from "bcryptjs";
 import { generateToken } from "../../utils/generateToken.js";
 import { safeUser } from "../../utils/safeUser.js";
 import sql from "../../configs/connectDb.js";
+import logger from "../../utils/logger.js";
+
+
+const cookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",       
+  sameSite: process.env.NODE_ENV === "production"
+    ? "none"   
+    : "lax",   
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+});
 
 // ── POST /api/auth/register ──
 export const register = async (req, res) => {
@@ -12,9 +23,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
 
     if (password.length < 6)
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters" });
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
 
     const existing = await sql`
       SELECT id FROM users WHERE email = ${email} LIMIT 1
@@ -31,17 +40,12 @@ export const register = async (req, res) => {
     `;
 
     const token = generateToken(rows[0].id);
+    logger.info(`Register: token generated for user ${rows[0].id}`);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
+    res.cookie("token", token, cookieOptions());
     res.status(201).json({ user: safeUser(rows[0]) });
   } catch (err) {
-    console.error("Register error:", err);
+    logger.error("Register error:", err);
     res.status(500).json({ message: "Server error during registration" });
   }
 };
@@ -52,9 +56,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password)
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+      return res.status(400).json({ message: "Email and password are required" });
 
     const rows = await sql`
       SELECT id, name, email, password, role, phone
@@ -63,6 +65,7 @@ export const login = async (req, res) => {
       LIMIT 1
     `;
 
+    // same message for wrong email and wrong password — don't reveal which
     if (!rows[0])
       return res.status(401).json({ message: "Invalid email or password" });
 
@@ -71,17 +74,12 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
 
     const token = generateToken(rows[0].id);
+    logger.info(`Login: token generated for user ${rows[0].id}`);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
+    res.cookie("token", token, cookieOptions());
     res.json({ user: safeUser(rows[0]) });
   } catch (err) {
-    console.error("Login error:", err);
+    logger.error("Login error:", err);
     res.status(500).json({ message: "Server error during login" });
   }
 };
@@ -96,21 +94,21 @@ export const getMe = async (req, res) => {
       LIMIT 1
     `;
 
-    if (!rows[0]) return res.status(404).json({ message: "User not found" });
+    if (!rows[0])
+      return res.status(404).json({ message: "User not found" });
 
     res.json({ user: safeUser(rows[0]) });
   } catch (err) {
-    console.error("GetMe error:", err);
+    logger.error("GetMe error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 // ── POST /api/auth/logout ──
 export const logout = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  });
+  // clearCookie options must exactly match the options used when setting
+  // so we spread cookieOptions() and remove maxAge (not needed for clearing)
+  const { maxAge, ...clearOptions } = cookieOptions();
+  res.clearCookie("token", clearOptions);
   res.json({ success: true, message: "Logged out successfully" });
 };

@@ -11,14 +11,32 @@ dotenv.config();
 const app = express();
 
 const isProduction = process.env.NODE_ENV === "production";
-const allowedOrigins =
-  (isProduction ? process.env.PROD_ORIGINS : process.env.DEV_ORIGINS)?.split(
-    ",",
-  ) || [];
+
+const allowedOrigins = (
+  isProduction ? process.env.PROD_ORIGINS : process.env.DEV_ORIGINS
+)
+  ?.split(",")
+  .map((o) => o.trim()) || [];
 
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        logger.error(`CORS blocked: ${origin}`);
+        callback(new Error(`CORS policy blocked: ${origin}`));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Health check
 app.get("/", (req, res) => {
@@ -28,8 +46,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// routes
-
+// Routes
 app.use("/api/auth", guestRouter);
 
 const PORT = process.env.PORT || 5000;

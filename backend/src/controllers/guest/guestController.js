@@ -40,7 +40,6 @@ export const register = async (req, res) => {
     `;
 
     const token = generateToken(rows[0].id);
-    logger.info(`Register: token generated for user ${rows[0].id}`);
 
     res.cookie("token", token, cookieOptions());
     res.status(201).json({ user: safeUser(rows[0]) });
@@ -74,7 +73,6 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
 
     const token = generateToken(rows[0].id);
-    logger.info(`Login: token generated for user ${rows[0].id}`);
 
     res.cookie("token", token, cookieOptions());
     res.json({ user: safeUser(rows[0]) });
@@ -106,8 +104,6 @@ export const getMe = async (req, res) => {
 
 // ── POST /api/auth/logout ──
 export const logout = (req, res) => {
-  // clearCookie options must exactly match the options used when setting
-  // so we spread cookieOptions() and remove maxAge (not needed for clearing)
   const { maxAge, ...clearOptions } = cookieOptions();
   res.clearCookie("token", clearOptions);
   res.json({ success: true, message: "Logged out successfully" });

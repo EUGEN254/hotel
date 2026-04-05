@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import guestRouter from "./routes/guest/guestRoutes.js";
 import { testConnection } from "./configs/connectDb.js";
 import logger from "./utils/logger.js";
+import roomsRouter from "./routes/admin/roomRoutes.js";
+import adminRouter from "./routes/admin/authRoutes.js";
 
 dotenv.config();
 
@@ -48,6 +50,8 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/auth", guestRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/rooms", roomsRouter);
 
 const PORT = process.env.PORT || 5000;
 

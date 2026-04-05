@@ -32,21 +32,24 @@ const Navbar = () => {
         </div>
 
         {/* Mobile menu toggle */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="sm:hidden text-white p-1"
-        >
-          {isMenuOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
-          )}
-        </button>
+        <div className="sm:hidden flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-white p-1"
+          >
+            {isMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </button>
+        </div>
 
         {/* Desktop buttons */}
         <div className="hidden sm:flex gap-3">
-         <ThemeToggle className=" bg-white/10 rounded-full p-4 h-8 hover:bg-primary shadow-lg" />
-         
+          <ThemeToggle className=" bg-white/10 rounded-full p-4 h-8 hover:bg-primary shadow-lg" />
+
           <Button
             variant="outline"
             size="sm"
@@ -70,8 +73,6 @@ const Navbar = () => {
       {/* Mobile dropdown */}
       {isMenuOpen && (
         <div className="sm:hidden absolute top-16 left-4 right-4 z-20 rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-4">
-         
-
           <div className="flex flex-col gap-1">
             {[
               { href: "#rooms", label: "Rooms" },

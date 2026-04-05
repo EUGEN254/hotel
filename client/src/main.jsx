@@ -6,7 +6,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { ThemeProvider } from "next-themes";
 
 createRoot(document.getElementById("root")).render(
-  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+  <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
     <BrowserRouter>
       <AuthProvider>
         <App />

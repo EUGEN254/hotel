@@ -3,14 +3,14 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
-
+import { ThemeProvider } from "next-themes";
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-  <AuthProvider>
-      <App />
-
-  </AuthProvider>
-  
-  </BrowserRouter>,
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </ThemeProvider>,
 );

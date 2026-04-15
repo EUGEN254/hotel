@@ -30,10 +30,10 @@ const FilterSidebar = ({ filters, onChange }) => {
   const clearAllFilters = () => {
     onChange({
       roomTypes: ["single", "double", "suite"],
-      maxPrice: 10000,
+      maxPrice: 50000,
       amenities: [],
     });
-    setPrice(10000);
+    setPrice(50000);
   };
 
   // Get selected filters summary for mobile button
@@ -113,7 +113,7 @@ const FilterSidebar = ({ filters, onChange }) => {
         <input
           type="range"
           min={1000}
-          max={10000}
+          max={50000}
           step={500}
           value={price}
           onChange={(e) => handlePriceChange(Number(e.target.value))}

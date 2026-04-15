@@ -12,7 +12,7 @@ const badgeStyles = {
 };
 
 const RoomCard = ({ room }) => {
-  const isAvailable = room.available;
+  const isAvailable = room.status === "available";
 
   // For unavailable rooms, wrap the entire card in a tooltip
   if (!isAvailable) {
@@ -22,8 +22,8 @@ const RoomCard = ({ room }) => {
           <div className="border border-border-light rounded-lg overflow-hidden bg-card opacity-50 cursor-not-allowed">
             <div className="aspect-[3/2] overflow-hidden bg-secondary">
               <img
-                src={room.image}
-                alt={`${room.name} — ${room.type} room`}
+                src={room.photo_url}
+                alt={`Room ${room.room_number} — ${room.type} room`}
                 loading="lazy"
                 width={960}
                 height={640}
@@ -40,7 +40,7 @@ const RoomCard = ({ room }) => {
                 {room.type.charAt(0).toUpperCase() + room.type.slice(1)}
               </span>
               <div className="text-md font-medium text-foreground mb-0.5">
-                {room.name}
+                Room {room.room_number}
               </div>
               <div className="text-[12px] text-muted-foreground mb-2 flex items-center gap-1">
                 <span className="w-[9px] h-[9px] rounded-full inline-block bg-status-occupied" />
@@ -48,7 +48,7 @@ const RoomCard = ({ room }) => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sm font-medium text-foreground">
-                  KES {room.price.toLocaleString()}
+                  KES {room.price_per_night.toLocaleString()}
                   <span className="text-[17px] font-normal text-muted-foreground ml-0.5">
                     / night
                   </span>
@@ -77,8 +77,8 @@ const RoomCard = ({ room }) => {
     <div className="border border-border-light rounded-lg overflow-hidden bg-card transition-all duration-200 group cursor-pointer hover:border-foreground/20 hover:shadow-sm">
       <div className="aspect-[3/2] overflow-hidden bg-secondary">
         <img
-          src={room.image}
-          alt={`${room.name} — ${room.type} room`}
+          src={room.photo_url}
+          alt={`Room ${room.room_number} — ${room.type} room`}
           loading="lazy"
           width={960}
           height={640}
@@ -95,7 +95,7 @@ const RoomCard = ({ room }) => {
           {room.type.charAt(0).toUpperCase() + room.type.slice(1)}
         </span>
         <div className="text-md font-medium text-foreground mb-0.5">
-          {room.name}
+          Room {room.room_number}
         </div>
         <div className="text-[12px] text-muted-foreground mb-2 flex items-center gap-1">
           <span className="w-[9px] h-[9px] rounded-full inline-block bg-status-available" />
@@ -103,7 +103,7 @@ const RoomCard = ({ room }) => {
         </div>
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium text-foreground">
-            KES {room.price.toLocaleString()}
+            KES {room.price_per_night.toLocaleString()}
             <span className="text-[17px] font-normal text-muted-foreground ml-0.5">
               / night
             </span>

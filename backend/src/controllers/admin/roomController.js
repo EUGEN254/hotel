@@ -83,6 +83,7 @@ export const getRoomById = async (req, res) => {
 export const createRoom = async (req, res) => {
   try {
     const { room_number, type, floor, price_per_night, description } = req.body;
+    logger.info(`CreateRoom request: room_number=${room_number}, type=${type}, floor=${floor}, price_per_night=${price_per_night} by admin ${req.userId}`);
 
     if (!room_number || !type || !floor || !price_per_night)
       return res.status(400).json({ message: "Room number, type, floor, and price are required" });

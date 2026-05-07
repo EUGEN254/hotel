@@ -48,7 +48,7 @@ const RoomCard = ({ room }) => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sm font-medium text-foreground">
-                  KES {room.price_per_night.toLocaleString()}
+                  KES {room.price_per_night?.toLocaleString() ?? '—'}
                   <span className="text-[17px] font-normal text-muted-foreground ml-0.5">
                     / night
                   </span>
@@ -103,7 +103,7 @@ const RoomCard = ({ room }) => {
         </div>
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium text-foreground">
-            KES {room.price_per_night.toLocaleString()}
+            KES {room.price_per_night?.toLocaleString() ?? '—'}
             <span className="text-[17px] font-normal text-muted-foreground ml-0.5">
               / night
             </span>
